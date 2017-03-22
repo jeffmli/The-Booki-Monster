@@ -7,6 +7,7 @@ from sklearn.decomposition import LatentDirichletAllocation
 from sklearn.feature_extraction.text import TfidfVectorizer, CountVectorizer
 from summarizer import Summarizer
 from scoring import find_ngrams, rouge_score
+from RandomSummarizer import RandomSummarizer
 
 def load_data(filename):
     f = open(filename)
@@ -26,13 +27,12 @@ def clean_line(chapter1):
 def print_top_words(model, feature_names, n_top_words):
     key_words = {}
     for topic_idx, topic in enumerate(model.components_):
-        print("Topic #%d:" % topic_idx)
-        print(" ".join([feature_names[i]
-                        for i in topic.argsort()[:-n_top_words - 1:-1]]))
+        # print("Topic #%d:" % topic_idx)
+        " ".join([feature_names[i]
+                        for i in topic.argsort()[:-n_top_words - 1:-1]])
         key_words[topic_idx] = [feature_names[i] for i in topic.argsort()[:-n_top_words - 1:-1]]
-    print()
+    # print()
     return key_words
-
 
 def create_dataframe(chapter1):
     df = pd.DataFrame({'Sentences': chapter1})
@@ -96,16 +96,22 @@ if __name__=='__main__':
     '''
     ---------------- Summarizer ------------------------
     '''
-    summary_object = Summarizer(bagofwords, sentences, tf_vectorizer, key_words, 1)
+    summary_object = Summarizer(chapter1_sentences_cleaned, sentences, tf_vectorizer, key_words, 6)
     # summary_sent = summary.get_sentence_scores()
     summary_object.get_sentence_scores()
     summary_object.summarize()
-    summary = summary_object.format_summary()
-    print summary
+    summary, summary_array = summary_object.format_summary()
+
+
+    '''
+    ---------------- Random Sentence Summary ------------------------
+    '''
+    random_summary_object = RandomSummarizer(chapter1_sentences_cleaned, sentences, summary_length = len(summary_array))
+    random_summary_object.sentence_generator()
+    random_summary = random_summary_object.format_summary()
+
     '''
     ---------------- Scoring ------------------------
-    - Note, will write a function to pull random sentences to create a baseline
-    for scoring.
     '''
     dirty_ref_summary = load_data('blinkistsummarytxt/blinkistsapiens.txt')
     split_reference_summary = split_by_period(dirty_ref_summary)
@@ -113,4 +119,13 @@ if __name__=='__main__':
     reference_summary = format_summary(reference_summary_cleaned)
 
     score = rouge_score(summary, reference_summary, n = 2)
-    print score
+    random_score = rouge_score(random_summary, reference_summary, n = 2)
+
+    percentage_reduced = (len(chapter1_sentences_cleaned) - len(summary_array))/float(len(chapter1_sentences_cleaned))
+    '''
+    ---------------- Print Results ------------------------
+    '''
+
+    print 'Rouge Score for Model :{0}'.format(score)
+    print 'Rouge Score for Baseline: {0}'.format(random_score)
+    print 'Percentage Reduced: {0}'.format(percentage_reduced)
