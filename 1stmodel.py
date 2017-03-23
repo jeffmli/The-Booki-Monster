@@ -10,13 +10,14 @@ from scoring import find_ngrams, rouge_score
 from RandomSummarizer import RandomSummarizer
 
 def load_data(filename):
+    '''
+    Load data
+    '''
     f = open(filename)
     return f.read()
 
-def split_by_period(chapter1):
-    return chapter1.split('.')
-
 def clean_line(chapter1):
+    chapter1 = chapter1.split('.')
     chapter1_sentences_cleaned = []
     for sentence in chapter1:
         sentence = sentence.strip('\n')
@@ -24,7 +25,30 @@ def clean_line(chapter1):
         chapter1_sentences_cleaned.append(sentence)
     return chapter1_sentences_cleaned
 
-def print_top_words(model, feature_names, n_top_words):
+def create_dataframe(chapter1):
+    return pd.DataFrame({'Sentences': chapter1})
+
+def word_tokenize(df):
+    df['tokenized_sents'] = df.apply(lambda row: nltk.word_tokenize(row['Sentences'].lower()), axis=1)
+    df1 = df['tokenized_sents']
+    df = df[df1.apply(lambda x:len(x)>0)]
+    return [row for row in df['tokenized_sents']]
+
+def vectorize(documents):
+    tf_vectorizer = CountVectorizer(stop_words='english')
+    tf = tf_vectorizer.fit_transform(documents)
+    tf_feature_names = tf_vectorizer.get_feature_names()
+    return tf, tf_feature_names, tf_vectorizer
+
+def latent_dirichlet_allocation(tf, k_topics):
+    lda = LatentDirichletAllocation(n_topics=10, max_iter=5,
+                                learning_method='online',
+                                learning_offset=50.,
+                                random_state=0)
+    fitted_lda = lda.fit(tf)
+    return fitted_lda
+
+def get_top_words(model, feature_names, n_top_words):
     key_words = {}
     for topic_idx, topic in enumerate(model.components_):
         # print("Topic #%d:" % topic_idx)
@@ -33,38 +57,6 @@ def print_top_words(model, feature_names, n_top_words):
         key_words[topic_idx] = [feature_names[i] for i in topic.argsort()[:-n_top_words - 1:-1]]
     # print()
     return key_words
-
-def create_dataframe(chapter1):
-    df = pd.DataFrame({'Sentences': chapter1})
-    return df
-
-def format_sentences(df):
-    return [row for row in df['tokenized_sents']]
-
-def word_tokenize(df):
-    df['tokenized_sents'] = df.apply(lambda row: nltk.word_tokenize(row['Sentences'].lower()), axis=1)
-    df1 = df['tokenized_sents']
-    df = df[df1.apply(lambda x:len(x)>0)]
-    return df
-
-def create_bag_of_words(df):
-    bagofwords = list(set(np.concatenate(df.tokenized_sents)))
-    return bagofwords
-
-def vectorize(documents):
-    tf_vectorizer = CountVectorizer(stop_words='english')
-    tf = tf_vectorizer.fit_transform(documents)
-    tf_feature_names = tf_vectorizer.get_feature_names()
-    return tf, tf_feature_names, tf_vectorizer
-
-def model(tf, k_topics):
-    lda = LatentDirichletAllocation(n_topics=10, max_iter=5,
-                                learning_method='online',
-                                learning_offset=50.,
-                                random_state=0)
-    fitted_lda = lda.fit(tf)
-    return fitted_lda
-    # How do I get the words that belong to n_topics?
 
 def format_summary(summary_list):
     clean_summary_array = []
@@ -79,43 +71,38 @@ if __name__=='__main__':
     ---------------- Load & Clean Data ------------------------
     '''
     chapter1 = load_data('test_sapiens_chapter_1.txt')
-    chapter1_sentences = split_by_period(chapter1)
-    chapter1_sentences_cleaned = clean_line(chapter1_sentences)
+    chapter1_sentences_cleaned = clean_line(chapter1)
     df = create_dataframe(chapter1_sentences_cleaned)
-    df = word_tokenize(df)
-    sentences = format_sentences(df)
+    sentences = word_tokenize(df)
     '''
     ---------------- Featurize/Run Model ------------------------
     '''
-    bagofwords = create_bag_of_words(df)
     tf, tf_feature_names, tf_vectorizer = vectorize(chapter1_sentences_cleaned)
-    fitted_lda = model(tf, 10)
+    fitted_lda = latent_dirichlet_allocation(tf, 10)
 
-    key_words = print_top_words(fitted_lda, tf_feature_names, n_top_words = 50)
-
+    key_words = get_top_words(fitted_lda, tf_feature_names, n_top_words = 50)
+    '''
+    ---------------- Feature Engineering ------------------------
+    '''
+    summary_object = Summarizer(chapter1_sentences_cleaned, sentences, tf_vectorizer, key_words, 6)
+    summary_object.get_sentence_scores()
     '''
     ---------------- Summarizer ------------------------
     '''
-    summary_object = Summarizer(chapter1_sentences_cleaned, sentences, tf_vectorizer, key_words, 6)
-    # summary_sent = summary.get_sentence_scores()
-    summary_object.get_sentence_scores()
+
     summary_object.summarize()
     summary, summary_array = summary_object.format_summary()
-
-
     '''
     ---------------- Random Sentence Summary ------------------------
     '''
     random_summary_object = RandomSummarizer(chapter1_sentences_cleaned, sentences, summary_length = len(summary_array))
     random_summary_object.sentence_generator()
     random_summary = random_summary_object.format_summary()
-
     '''
     ---------------- Scoring ------------------------
     '''
     dirty_ref_summary = load_data('blinkistsummarytxt/blinkistsapiens.txt')
-    split_reference_summary = split_by_period(dirty_ref_summary)
-    reference_summary_cleaned = clean_line(split_reference_summary)
+    reference_summary_cleaned = clean_line(dirty_ref_summary)
     reference_summary = format_summary(reference_summary_cleaned)
 
     score = rouge_score(summary, reference_summary, n = 2)
