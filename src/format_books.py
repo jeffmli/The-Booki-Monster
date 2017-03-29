@@ -86,10 +86,6 @@ def format_sentences(book):
         book_list.append(chapter_list)
     return book_list
 
-def get_
-
-
-
 if __name__ == '__main__':
     # MoonwalkingwithEinstein_fullbook_cleaned.txt
     dirty_book = load_data('booktxt/MoonwalkingwithEinstein_fullbook_cleaned.txt')

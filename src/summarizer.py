@@ -29,19 +29,21 @@ class Summarizer(object):
         '''
         text_features = TextFeatures()
         for sentence in self.sentences:
-            '''
-            Position-Weight Feature
-            '''
-            position_dict = text_features.sentence_position_weight(self.documents, self.sentences)
-            '''
-            Num Words Feature
-            '''
-            num_words = len(sentence)
-            '''
-            Term-Frequency Feature
-            '''
+            # '''
+            # Position-Weight Feature
+            # '''
+            # position_dict = text_features.sentence_position_weight(self.documents, self.sentences)
+            # '''
+            # Num Words Feature
+            # '''
+            # num_words = len(sentence)
+            # '''
+            # Term-Frequency Feature
+            # '''
             self.score = text_features.term_frequencies(sentence, self.topic, self.key_words)
             self.sentence_scores.append(self.score)
+        return self.sentence_scores
+        # return self.sentence_scores
 
     '''
     -------------------------------Summarizing-------------------------------
@@ -76,6 +78,7 @@ class Summarizer(object):
         top_n = np.where(cumulative_importance > 0.9)
         important_sentence_idx = sort_idx[top_n]
         sentence_idx = np.sort(important_sentence_idx)
+        sentence_idx = sentence_idx[:20]
 
         summary_array = self.sentences[sentence_idx]
         self.summary_array = [' '.join(sentence) for sentence in summary_array]
@@ -85,10 +88,4 @@ class Summarizer(object):
         '''
         Formatting the summary into a readable format.
         '''
-        clean_summary_array = []
-        for sentence in self.summary_array:
-            sentence = ''.join(sentence[0].upper() + sentence[1:])
-            sentence = sentence + "."
-            clean_summary_array.append(sentence)
-        clean_summary_array = ' '.join(clean_summary_array).replace(',', '.')
-        return clean_summary_array, self.summary_array
+        return ' '.join(self.summary_array)
