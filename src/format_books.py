@@ -86,10 +86,23 @@ def format_sentences(book):
         book_list.append(chapter_list)
     return book_list
 
-if __name__ == '__main__':
-    # MoonwalkingwithEinstein_fullbook_cleaned.txt
-    dirty_book = load_data('booktxt/MoonwalkingwithEinstein_fullbook_cleaned.txt')
+def split_by_percentage(book, n = 10):
+    '''
+    Splitting the book into n number of sections
+    '''
+    book_sections = []
+    sentences_in_section = len(book)/n
+    for i in range(0,n):
+        section = book[sentences_in_section * i: sentences_in_section * (i+1)]
+        book_sections.append(section)
+    return book_sections
 
+if __name__ == '__main__':
+
+    '''
+    ----------------- Splitting by Chapters -----------------
+    '''
+    dirty_book = load_data('booktxt/Moonwalking With Einstein.txt')
     sliced_book = get_sections(dirty_book)
     kinda_clean_book = [get_rid_of_weird_characters(section) for section in sliced_book]
     more_clean_book = chapter_paragraph_tag(kinda_clean_book)
@@ -97,3 +110,10 @@ if __name__ == '__main__':
     split = split_by_section(combined)
 
     formatted_sentence = format_sentences(split)
+
+
+    '''
+    ----------------- Splitting by Percentages -----------------
+    '''
+    book = get_rid_of_weird_characters(dirty_book)
+    all_sentences, book_sections = split_by_percentage(sent_tokenize(book), n = 10)

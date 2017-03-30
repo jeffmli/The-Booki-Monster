@@ -5,8 +5,7 @@ from nltk import word_tokenize, sent_tokenize
 import random
 
 class RandomSummarizer(object):
-    def __init__(self, documents, sentences, summary_length):
-        self.documents = documents
+    def __init__(self, sentences, summary_length):
         self.sentences = sentences
         self.summary_length = summary_length
         self.random_summary = []
@@ -25,4 +24,4 @@ class RandomSummarizer(object):
             clean_summary_array.append(sentence)
         # clean_summary_array = ' '.join(clean_summary_array).replace(',', '.')
         clean_summary = [' '.join(sentence) for sentence in clean_summary_array]
-        return clean_summary_array
+        return self.random_summary

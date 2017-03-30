@@ -32,7 +32,7 @@ def aggregate_summaries(summaries):
 def get_rid_of_tags(text):
     text = re.sub('[</p>]', '', text)
     text = text.replace('strong', '')
-    text = re.sub('[^A-Za-z0-9|.|,|!|?|']+', ' ', text)
+    text = re.sub('[^A-Za-z0-9|.|,|!|?]+', ' ', text)
     return text
 
 def read_all_files_in_folder(path, summary_dict):
@@ -57,19 +57,18 @@ def read_all_files_in_folder(path, summary_dict):
 def clean_book_text(titles, sum_book_dict):
     for book in sum_book_dict:
         whole_text = sum_book_dict[book]['book']
+        #
+        # sliced_book = format_books.get_sections(whole_text)
+        # kinda_clean_book = [format_books.get_rid_of_weird_characters(section) for section in sliced_book]
+        # more_clean_book = format_books.chapter_paragraph_tag(kinda_clean_book)
+        # combined = format_books.combine_strings_split_on_chapter(more_clean_book) #A list of chapters.
+        # split = format_books.split_by_section(combined)
+        # formatted_sentence = format_books.format_sentences(split)
+        #
+        cleaned = format_books.get_rid_of_weird_characters(whole_text)
 
-        sliced_book = format_books.get_sections(whole_text)
-        kinda_clean_book = [format_books.get_rid_of_weird_characters(section) for section in sliced_book]
-        more_clean_book = format_books.chapter_paragraph_tag(kinda_clean_book)
-        combined = format_books.combine_strings_split_on_chapter(more_clean_book) #A list of chapters.
-        split = format_books.split_by_section(combined)
-        formatted_sentence = format_books.format_sentences(split)
-
-        sum_book_dict[book]['book'] = formatted_sentence
+        sum_book_dict[book]['book'] = cleaned
     return sum_book_dict
-
-
-
 
 if __name__=='__main__':
     summaries = load_data('books.json')
