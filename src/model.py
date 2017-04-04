@@ -11,9 +11,9 @@ import format_books
 from gensim.models import Doc2Vec
 from gensim.models.doc2vec import LabeledSentence
 import clean_blinkist
-import ast
 from sklearn.metrics.pairwise import cosine_similarity
 import rake
+import pickle
 
 def table_of_contents():
     '''
@@ -76,7 +76,7 @@ def aggregate_summary(documents, topic, length):
         summary = generate_summary(sentences, sentences_tok, tf_vectorizer, key_words, topic = topic, length = length)
         book.append(summary)
 
-        chapter_summary_object = RandomSummarizer(sentences, summary_length = len(sent_tokenize(summary))) # The length is the number of sentences in the chapter summ of summary.
+        chapter_summary_object = RandomSummarizer(sentences, summary_length = length) # The length is the number of sentences in the chapter summ of summary.
         chapter_summary_object.sentence_generator()
         chapter_rand_summary = chapter_summary_object.format_summary()
         rand_book.append(chapter_rand_summary)
@@ -219,22 +219,22 @@ def create_dataframe_for_scores(sum_book_dict):
     df = pd.DataFrame(list(sum_book_dict.iteritems()), columns= ["Title", "Contents"])
     s = pd.DataFrame((d for idx, d in df['Contents'].iteritems()))
     df = df.join(s)
-    return df[:1]
+    return df[11:12]
 
 def feature_build_summary(df, topic):
     '''
     Note: Remember to add the models in here when finished building them.
     '''
     def agg(x):
-        lda_book, rand_book = aggregate_summary(x, topic = 7, length = 20)
+        lda_book, rand_book = aggregate_summary(x, topic = 7, length = 11)
         return lda_book
 
     def rand(x):
-        lda_book, rand_book = aggregate_summary(x, topic = 7, length = 20)
+        lda_book, rand_book = aggregate_summary(x, topic = 7, length = 11)
         return rand_book
 
     df['LDA Summary'] = df['book_split_n'].apply(lambda x : agg(x))
-    df['Doc2Vec Summary'] = df['book_split_n'].apply(lambda x : doc2vec_total(x, length = 10))
+    df['Doc2Vec Summary'] = df['book_split_n'].apply(lambda x : doc2vec_total(x, length = 11))
     df['Random Summary'] = df['book_split_n'].apply(lambda x : rand(x))
 
     def format_(x):
@@ -249,14 +249,53 @@ def feature_build_summary(df, topic):
     df['Random Summary'] = df['Random Summary'].apply(lambda x : format_(x))
     return df
 
+def build_max_summ_score(df):
+
+    def doc2vec_max_sum(ref_summary, book):
+#     joined_chapter = " ".join([" ".join(string) for string in chapter])
+#     tokenized_chapter = sent_tokenize(joined_chapter)
+        class LabeledLineSentence(object):
+            '''
+            Create generator of reference summary & entire book to create vectors
+            '''
+            def __init__(self, summary, book):
+                self.summary = summary
+                self.book = book
+            def __iter__(self):
+                yield LabeledSentence(words= ' '.join(self.summary).split(), tags=['REF SUMMARY'])
+                yield LabeledSentence(words = ' '.join(self.book).split(), tags = ['WHOLE BOOK'])
+                for uid, line in enumerate(self.book):
+                    yield LabeledSentence(words=line.split(), tags=[int(uid)])
+
+
+        x = LabeledLineSentence(ref_summary, book)
+
+        model = Doc2Vec()
+        model.build_vocab(x)
+        model.train(x)
+        similar_sentences = np.array(model.docvecs.most_similar('REF SUMMARY', topn = 229))
+
+        vector_index = [int(vector[0]) for vector in similar_sentences[1:]]
+        sim_sentence = [book[index] for index in vector_index[:100]]
+        total_sentence = ' '.join(sim_sentence)
+        return total_sentence
+
+    def f(x):
+        return rouge_score[x[0], x[1]]
+
+    df['Reference Produced Summary'] = df[['summary', 'all_sentences']].apply(lambda x: doc2vec_max_sum(x[0], x[1]),axis = 1)
+    df['Max Rouge Score'] = df[['Reference Produced Summary', 'summary']].apply(lambda x: rouge_score(x[0], x[1]), axis = 1)
+    return df
+
+
 def fill_df_with_scores(df):
     df['summary'] = df['summary'].apply(lambda x: ''.join(x))
-    df['LDA Split Score'] = df['LDA Summary'].apply(lambda x : rouge_score(x, df['summary'].values[0]))
-    df['Doc2Vec Split Score'] = df['Doc2Vec Summary'].apply(lambda x : rouge_score(x, df['summary'].values[0]))
-    df['Random Split Summary Score'] = df['Random Summary'].apply(lambda x : rouge_score(x, df['summary'].values[0]))
-    df['LDA Full Book Score'] = df['LDA Full Book Summary'].apply(lambda x : rouge_score(x, df['summary'].values[0]))
-    df['Doc2Vec Full Book Score'] = df['Doc2Vec Full Book Summary'].apply(lambda x : rouge_score(x, df['summary'].values[0]))
-    df['Full Book Random Summary Score'] = df['Full Book Random Summary'].apply(lambda x : rouge_score(x, df['summary'].values[0]))
+    df['LDA Split Score'] = df[['LDA Summary', 'summary']].apply(lambda x : rouge_score(x[0], x[1]), axis = 1)
+    df['Doc2Vec Split Score'] = df[['Doc2Vec Summary', 'summary']].apply(lambda x : rouge_score(x[0], x[1]), axis = 1)
+    df['Random Split Summary Score'] = df[['Random Summary', 'summary']].apply(lambda x : rouge_score(x[0], x[1]), axis = 1)
+    df['LDA Full Book Score'] = df[['LDA Full Book Summary', 'summary']].apply(lambda x : rouge_score(x[0], x[1]), axis = 1)
+    df['Doc2Vec Full Book Score'] = df[['Doc2Vec Full Book Summary', 'summary']].apply(lambda x : rouge_score(x[0], x[1]), axis = 1)
+    df['Full Book Random Summary Score'] = df[['Full Book Random Summary', 'summary']].apply(lambda x : rouge_score(x[0], x[1]), axis = 1)
     return df
 
 def add_split_percent_book(df, n = 10):
@@ -284,7 +323,7 @@ def whole_book_lda(df, topic = 7):
         rand_summary_object = RandomSummarizer(sentences, summary_length = len(sent_tokenize(summary))) # The length is the number of sentences in the chapter summ of summary.
         rand_summary_object.sentence_generator()
         rand_summary = rand_summary_object.format_summary()
-        return summary
+        return summary, key_words
 
     def rand_summary(x):
         sentences = sent_tokenize(x)
@@ -295,83 +334,29 @@ def whole_book_lda(df, topic = 7):
         rand_summary_object = RandomSummarizer(sentences, summary_length = len(sent_tokenize(summary))) # The length is the number of sentences in the chapter summ of summary.
         rand_summary_object.sentence_generator()
         rand_summary = rand_summary_object.format_summary()
-        rand_summary = ' '.join(rand_summary)
+        rand_summary = ''.join(rand_summary)
         return rand_summary
 
     df['LDA Full Book Summary'] = df['book'].apply(lambda x : lda_summary(x))
     df['Full Book Random Summary'] = df['book'].apply(lambda x : rand_summary(x))
+
     return df
 
 def whole_book_doc2vec(df):
     df['Doc2Vec Full Book Summary'] = df['book'].apply(lambda x : doc2vec(x, length = 100))
     return df
 
-
-
-
-
 if __name__=='__main__':
-    '''
-    ---------------- Load JSON file ----------------
-    '''
-    sum_book_dict_clean = import_data('books.json')
+    # sum_book_dict_clean = import_data('books.json')
 
-    df = create_dataframe_for_scores(sum_book_dict_clean)
+    file2 = open('C:\d.pkl', 'r')
+    sum_book_dict = pickle.load(file2)
+    file2.close()
+
+    df = create_dataframe_for_scores(sum_book_dict)
     df = add_split_percent_book(df, n = 10)
-    df = feature_build_summary(df, topic = 7)
+    df = feature_build_summary(df, topic = 6)
     df = whole_book_lda(df)
     df = whole_book_doc2vec(df)
     df = fill_df_with_scores(df)
-    #
-    # '''
-    # ---------------- Load & Clean Data ------------------------
-    # '''
-    # dirty_book = load_data('booktxt/Moonwalking With Einstein.txt')
-    # sliced_book = format_books.get_sections(dirty_book)
-    # kinda_clean_book = [format_books.get_rid_of_weird_characters(section) for section in sliced_book]
-    # more_clean_book = format_books.chapter_paragraph_tag(kinda_clean_book)
-    # combined = format_books.combine_strings_split_on_chapter(more_clean_book) #A list of chapters.
-    # split = format_books.split_by_section(combined)
-    # formatted_sentence = format_books.format_sentences(split) # Won't work yet, will need to loop through chapters
-    #
-    # '''
-    # ---------------- Featurize + Build Summary ------------------------
-    # '''
-    # lda_book, rand_book = aggregate_summary(formatted_sentence, topic=1)
-    #
-    # doc2vec_book = doc2vec_total(formatted_sentence)
-    # '''
-    # ---------------- Format Summaries for Scoring------------------------
-    # '''
-    # dirty_ref_summary = load_data('blinkistsummarytxt/blinkistsapiens.txt')
-    # reference_summary_cleaned = clean_line(dirty_ref_summary)
-    # reference_summary = format_summary(reference_summary_cleaned)
-    #
-    # joined_lda_book = ' '.join(lda_book)
-    #
-    # joined_rand_book =  [' '.join(chapter) for chapter in rand_book]
-    # joined_random_book = ' '.join(joined_rand_book)
-    #
-    # joined_doc2vec = ' '.join(doc2vec_book)
-    #
-    # '''
-    # ---------------- Scoring ------------------------
-    # '''
-    #
-    # lda_score = rouge_score(joined_lda_book, reference_summary, n = 2)
-    # doc2vec_score = rouge_score(joined_doc2vec, reference_summary, n=2)
-    # random_score = rouge_score(joined_random_book, reference_summary, n = 2)
-    #
-    # lda_percentage_reduced = (len(' '.join(kinda_clean_book)) - len(joined_lda_book))/float(len(' '.join(kinda_clean_book)))
-    # doc2vec_percent_reduced = (len(' '.join(kinda_clean_book)) - len(joined_doc2vec))/float(len(' '.join(kinda_clean_book)))
-    # ref_reduced = (len(' '.join(kinda_clean_book))- len(reference_summary))/float(len(' '.join(kinda_clean_book)))
-    #
-    # '''
-    # ---------------- Print ------------------------
-    # '''
-    # print 'Rouge Score for LDA Model :{0}'.format(lda_score)
-    # print 'Rouge Score for Doc2Vec Model :{0}'.format(doc2vec_score)
-    # print 'Rouge Score for Baseline: {0}'.format(random_score)
-    # print 'Percentage LDA Reduced: {0}'.format(lda_percentage_reduced)
-    # print 'Percentage Doc2Vec Reduced: {0}'.format(doc2vec_percent_reduced)
-    # print 'Reference Summary Amount Reduced: {0}'.format(ref_reduced)
+    df = build_max_summ_score(df)

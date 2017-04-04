@@ -6,8 +6,8 @@ from sklearn.decomposition import LatentDirichletAllocation
 from sklearn.feature_extraction.text import TfidfVectorizer, CountVectorizer
 from sklearn.metrics.pairwise import cosine_similarity, linear_kernel
 from collections import Counter
-from spacy.gold import GoldParse
-from spacy.language import EntityRecognizer
+from nltk.tag import brill
+from nltk import pos_tag
 
 class TextFeatures(object):
     def __init__(self):
@@ -16,35 +16,32 @@ class TextFeatures(object):
         -------------------- Sentence Features --------------------
         '''
 
-    def sentence_position_weight(self, documents, sentences):
+    def sentence_position_weight(self, pos_percent):
         '''
         Weights a sentence based on it's position in the chapter.
         '''
-        sentence_probability_dict = dict.fromkeys(documents, 0)
-        for position, sentence in enumerate(sentence_probability_dict):
-            if float(position)/len(documents)<=0.1:
-                sentence_probability_dict[sentence] = 0.17
-            elif 0.1 < float(position)/len(documents) <= 0.2:
-                sentence_probability_dict[sentence] = 0.23
-            elif 0.2 < float(position)/len(documents) <= 0.3:
-                sentence_probability_dict[sentence] = 0.14
-            elif 0.3 < float(position)/len(documents) <= 0.4:
-                sentence_probability_dict[sentence] = 0.08
-            elif 0.4 < float(position)/len(documents) <= 0.5:
-                sentence_probability_dict[sentence] = 0.05
-            elif 0.5 < float(position)/len(documents) <= 0.6:
-                sentence_probability_dict[sentence] = 0.04
-            elif 0.6 < float(position)/len(documents) <= 0.7:
-                sentence_probability_dict[sentence] = 0.06
-            elif 0.7 < float(position)/len(documents) <= 0.8:
-                sentence_probability_dict[sentence] = 0.04
-            elif 0.8 < float(position)/len(documents) <= 0.9:
-                sentence_probability_dict[sentence] = 0.04
-            elif 0.9 < float(position)/len(documents) <= 1.0:
-                sentence_probability_dict[sentence] = 0.15
-        return sentence_probability_dict
+        if pos_percent <=0.1:
+            return 0.17
+        elif 0.1 < pos_percent <= 0.2:
+            return 0.23
+        elif 0.2 < pos_percent <= 0.3:
+            return 0.14
+        elif 0.3 < pos_percent <= 0.4:
+            return 0.08
+        elif 0.4 < pos_percent <= 0.5:
+            return 0.05
+        elif 0.5 < pos_percent <= 0.6:
+            return 0.04
+        elif 0.6 < pos_percent <= 0.7:
+            return 0.06
+        elif 0.7 < pos_percent <= 0.8:
+            return 0.04
+        elif 0.8 < pos_percent <= 0.9:
+            return 0.04
+        elif 0.9 < pos_percent <= 1.0:
+            return 0.15
 
-    def num_words(self, documents):
+    def num_tokens(self, documents):
         '''
         Number of words in sentence
         '''
@@ -60,36 +57,25 @@ class TextFeatures(object):
                 word_appear += 1
         return word_appear
 
-    def named_entities(self):
+    def presence_of_verb(self, sentence):
         '''
-        Look at the amount of times a named entity occurs over the entire corpus,
-        select the entities that have the highest frequency. Add positive rank to
-        the sentence if it contains an important entity.
+        If sentence contains a verb, upweight the score of the sentence.
         '''
-        pass
-
-    def presence_of_verb(self):
-        pass
-
-    def sentence_length(self):
-        pass
-
+        verb_type = ['VB','VBZ','VBN','VBG','VBD']
+        # text = word_tokenize(sentence)
+        tag = pos_tag(sentence)
+        verb_count = 0
+        for word in tag:
+            if any(verb in word for verb in verb_type):
+                verb_count += 1
+        return verb_count
 
     '''
     -------------------- Word Features --------------------
     '''
 
-    def term_frequency(self):
-        pass
-
-    def word_length(self):
-        pass
-
     def parts_of_speech(self):
         pass
 
     def word_familiarity(self):
-        pass
-
-    def heading_occurence(self):
         pass

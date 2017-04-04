@@ -5,6 +5,9 @@ import re
 import glob
 import os
 import format_books
+import pickle
+from load_scraped_summary import read_full_book_txt, read_summary_txt
+import collections
 
 def load_data(filename):
     with open('books.json') as books:
@@ -54,26 +57,45 @@ def read_all_files_in_folder(path, summary_dict):
             sum_book_dict[titles[index[0]]] = {'summary':summary_dict[titles[index[0]]], 'book':book}
     return sum_book_dict
 
-def clean_book_text(titles, sum_book_dict):
-    for book in sum_book_dict:
+def clean_book_text(sum_book_dict, form):
+    for title in sum_book_dict:
+        whole_text = sum_book_dict[title][form]
+        cleaned = format_books.get_rid_of_weird_characters(whole_text)
+
+        sum_book_dict[title][form] = cleaned
+    return sum_book_dict
+
+def combine_both_dictionaries(blinkist_book_dict, katrina_book_sum_dict):
+    cleaned = clean_book_text(katrina_book_sum_dict, 'summary')
+    for title in cleaned:
+        blinkist_book_dict[title] = {'summary':cleaned[title]['summary'], 'book':katrina_book_sum_dict[title]['book']}
+    super_dict = blinkist_book_dict
+    return super_dict
+
+def clean_summary(sum_book_dict):
+    for summary in sum_book_dict:
         whole_text = sum_book_dict[book]['book']
-        #
-        # sliced_book = format_books.get_sections(whole_text)
-        # kinda_clean_book = [format_books.get_rid_of_weird_characters(section) for section in sliced_book]
-        # more_clean_book = format_books.chapter_paragraph_tag(kinda_clean_book)
-        # combined = format_books.combine_strings_split_on_chapter(more_clean_book) #A list of chapters.
-        # split = format_books.split_by_section(combined)
-        # formatted_sentence = format_books.format_sentences(split)
-        #
         cleaned = format_books.get_rid_of_weird_characters(whole_text)
 
         sum_book_dict[book]['book'] = cleaned
-    return sum_book_dict
+    return book_dict
+
 
 if __name__=='__main__':
+
     summaries = load_data('books.json')
     titles = get_titles(summaries)
     summary_dict = aggregate_summaries(summaries)
     sum_book_dict_dirty = read_all_files_in_folder('blinkistbooktxt/*.txt', summary_dict)
 
-    sum_book_dict_clean = clean_book_text(titles, sum_book_dict_dirty)
+    sum_book_dict_clean = clean_book_text(sum_book_dict_dirty, 'book')
+
+    katrina_book_dict = read_full_book_txt('Katrina Pulled Book txt/*.txt')
+    katrina_book_sum_dict = read_summary_txt('Katrina Pulled Summaries/*.txt', katrina_book_dict)
+    katrina_book_sum_dict_clean = clean_book_text(katrina_book_sum_dict, 'book')
+
+    super_dict = combine_both_dictionaries(sum_book_dict_clean, katrina_book_sum_dict_clean)
+
+    afile = open('C:\d.pkl', 'wb')
+    pickle.dump(super_dict, afile)
+    afile.close()
