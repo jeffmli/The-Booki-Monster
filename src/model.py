@@ -33,14 +33,17 @@ def table_of_contents():
 
 def load_data(filename):
     '''
-    Load data
+    INPUT: filename
+    OUTPUT: file object
     '''
     f = open(filename)
     return f.read()
 
 def clean_line(chapter1):
     '''
-    Get rid of useless characters.
+    INPUT: String
+    OUTPUT: String
+    Get rid of useless characters in data.
     '''
     chapter1 = chapter1.split('.')
     chapter1_sentences_cleaned = []
@@ -52,7 +55,7 @@ def clean_line(chapter1):
 
 def format_summary(summary_list):
     '''
-    Re-format summary.
+    Re-format list of summaries into an array containing the entire summary.
     '''
     clean_summary_array = []
     for sentence in summary_list:
@@ -63,7 +66,8 @@ def format_summary(summary_list):
 
 def aggregate_summary(documents, topic, length):
     '''
-    Aggregate all section summaries into one summary.
+    INPUT: Sentence tokenized strings, topic number, length of summary
+    OUTPUT: Summarized book, Randomized sentence summary
     '''
     book = []
     rand_book = []
@@ -84,7 +88,8 @@ def aggregate_summary(documents, topic, length):
 
 def generate_summary(formatted_sentences, sentences_tok, tf_vectorizer, key_words, topic, length):
     '''
-    Aggregate all functions created to generate summaries to generate summary.
+    INPUT: Sentenced tokenized book by section, tokenized sentences, term-frequency vector object, key words, topic number, length of summary
+    OUTPUT: Summary
     '''
 
     summary_object = Summarizer(formatted_sentences, sentences_tok, tf_vectorizer, key_words, topic, length)
@@ -96,7 +101,8 @@ def generate_summary(formatted_sentences, sentences_tok, tf_vectorizer, key_word
 
 def get_key_words_vector(documents):
     '''
-    Get all key words using LDA model
+    INPUT: Sentences
+    OUTPUT: Key words, term-frequency object, term-frequency feature names, term-frequency vector object
     '''
     tf, tf_feature_names, tf_vectorizer = vectorize(documents)
     fitted_lda = latent_dirichlet_allocation(tf, 10)
@@ -105,7 +111,9 @@ def get_key_words_vector(documents):
 
 def get_top_words(model, feature_names, n_top_words):
     '''
-    using the LDA topic model to extract key words
+    Use the LDA topic model to extract key words
+    INPUT: Latent Dirichlect Allocation Model object, feature names, # of top words
+    OUTPUT: Key words from LDA model
     '''
     key_words = {}
     for topic_idx, topic in enumerate(model.components_):
@@ -117,6 +125,10 @@ def get_top_words(model, feature_names, n_top_words):
     return key_words
 
 def keyword_tokenize(text):
+    '''
+    INPUT: String
+    OUTPUT: Tokenized String
+    '''
     stoppath = 'RAKE-tutorial/SmartStoplist.txt'
     rake_object = rake.Rake(stoppath, 5, 3, 4)
     sentenceList = rake.split_sentences(text)
@@ -127,31 +139,18 @@ def keyword_tokenize(text):
 
 def vectorize(documents):
     '''
-    Turning sentences into multiple vectors:
-    - Currently using just a Count Vectorizer to pass through LDA model
-    - Add a whole book to vectorize the whole book
+    INPUT: List of strings
+    OUTPUT: term-frequency, term-frequency feature names, term-frequency vector object
     '''
-
-    '''
-    Count-Vectorizer
-    '''
-
     tf_vectorizer = CountVectorizer(stop_words='english', tokenizer = keyword_tokenize)
     tf = tf_vectorizer.fit_transform(documents)
     tf_feature_names = tf_vectorizer.get_feature_names()
-
-    '''
-    Tfidf-Vectorizer
-    '''
-    # idf_vectorizer = TfidfVectorizer(stop_words='english')
-    # idf = tf_vectorizer.fit_transform(keyword_tokenize(documents))
-    # idf_feature_names = idf_vectorizer.get_feature_names()
-
     return tf, tf_feature_names, tf_vectorizer
 
 def latent_dirichlet_allocation(tf, k_topics):
     '''
-    LDA topic model.
+    INPUT: term-frequency, # of topics
+    OUTPUT: LDA model
     '''
     lda = LatentDirichletAllocation(n_topics=10, max_iter=5,
                                 learning_method='online',
@@ -161,10 +160,9 @@ def latent_dirichlet_allocation(tf, k_topics):
     return fitted_lda
 
 def doc2vec_total(documents, length):
-
     '''
-    To Do:
-    - Add a length so it matches the length of the reference summaries.
+    INPUT: List of strings, length of summary
+    OUTPUT: Summarized book
     '''
     book = []
     for chapter in documents:
@@ -173,6 +171,10 @@ def doc2vec_total(documents, length):
     return book
 
 def doc2vec(chapter, length):
+    '''
+    INPUT: Chapter string, length of summary
+    OUTPUT: Chapter summary
+    '''
     if type(chapter) == list:
         joined_chapter = " ".join(["".join(string) for string in chapter])
         tokenized_chapter = sent_tokenize(joined_chapter)
@@ -203,6 +205,10 @@ def doc2vec(chapter, length):
     return chapter_summary
 
 def import_data(filename):
+    '''
+    INPUT: Filename
+    OUTPUT: Dictionary
+    '''
     summaries = clean_blinkist.load_data(filename)
     titles = clean_blinkist.get_titles(summaries)
     summary_dict = clean_blinkist.aggregate_summaries(summaries)
@@ -213,9 +219,9 @@ def import_data(filename):
 
 def create_dataframe_for_scores(sum_book_dict):
     '''
-    Creating a dataframe to store all the scores calculated by the model for each book.
+    INPUT: Dictionary
+    OUTPUT: DataFrame
     '''
-
     df = pd.DataFrame(list(sum_book_dict.iteritems()), columns= ["Title", "Contents"])
     s = pd.DataFrame((d for idx, d in df['Contents'].iteritems()))
     df = df.join(s)
@@ -223,7 +229,8 @@ def create_dataframe_for_scores(sum_book_dict):
 
 def feature_build_summary(df, topic):
     '''
-    Note: Remember to add the models in here when finished building them.
+    INPUT: DataFrame, topic #
+    OUTPUT: DataFrame
     '''
     def agg(x):
         lda_book, rand_book = aggregate_summary(x, topic = 7, length = 11)
@@ -250,6 +257,10 @@ def feature_build_summary(df, topic):
     return df
 
 def build_max_summ_score(df):
+    '''
+    INPUT: DataFrame
+    OUTPUT: DataFrame
+    '''
 
     def doc2vec_max_sum(ref_summary, book):
 #     joined_chapter = " ".join([" ".join(string) for string in chapter])
@@ -289,6 +300,10 @@ def build_max_summ_score(df):
 
 
 def fill_df_with_scores(df):
+    '''
+    INPUT: DataFrame
+    OUTPUT: DataFrame
+    '''
     df['summary'] = df['summary'].apply(lambda x: ''.join(x))
     df['LDA Split Score'] = df[['LDA Summary', 'summary']].apply(lambda x : rouge_score(x[0], x[1]), axis = 1)
     df['Doc2Vec Split Score'] = df[['Doc2Vec Summary', 'summary']].apply(lambda x : rouge_score(x[0], x[1]), axis = 1)
@@ -300,7 +315,8 @@ def fill_df_with_scores(df):
 
 def add_split_percent_book(df, n = 10):
     '''
-    Add new column that splits the book by n times and an entire book of all it's sentences.
+    INPUT: DataFrame, number of splits
+    OUTPUT: DataFrame
     '''
     # df['all_sentences'] = df['book'].apply(lambda x: sent_tokenize(x))
 
@@ -313,6 +329,10 @@ def add_split_percent_book(df, n = 10):
     return df
 
 def whole_book_lda(df, topic = 7):
+    '''
+    INPUT: DataFrame, topic number
+    OUTPUT: DataFrame
+    '''
 
     def lda_summary(x):
         sentences = sent_tokenize(x)
@@ -343,6 +363,10 @@ def whole_book_lda(df, topic = 7):
     return df
 
 def whole_book_doc2vec(df):
+    '''
+    INPUT: DataFrame
+    OUTPUT: DataFrame
+    '''
     df['Doc2Vec Full Book Summary'] = df['book'].apply(lambda x : doc2vec(x, length = 100))
     return df
 

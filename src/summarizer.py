@@ -28,28 +28,24 @@ class Summarizer(object):
 
     '''
     -------------------------------Feature Engineering-------------------------------
-    - Apply RAKE to pull multiple word tokens.
-        Note: The sentences coming in are already tokenized
-    - Create tfidf, count, doc2vec, lda2vec vectors of sentences in book.
-    - Score sentence vectors by computing against vector of entire book.
-    - Rank sentences based off sentence vector scores.
-    - Assign specific sentence weights to the sentence vector scores.
-    - Re-rank sentences based on assigned weights.
     '''
     def tfidf_vectorizer(self):
+        '''
+        OUTPUT: term-frequency inverse document frequency object, term-frequency inverse-document frequency vectorize object
+        '''
         tfidf_vectorizer = TfidfVectorizer(stop_words='english')
         tfidf = tf_vectorizer.fit_transform(keyword_tokenize(self.documents))
         tfidf_feature_names = idf_vectorizer.get_feature_names()
         return tfidf, tfidf_vectorizer
 
     def count_vectorizer(self):
+        '''
+        OUTPUT: Count vectorizer fitted object, Count vectorizer object
+        '''
         count_vectorizer = CountVectorizer(stop_words='english')
         count = tf_vectorizer.fit_transform(keyword_tokenize(self.documents))
         count_feature_names = idf_vectorizer.get_feature_names()
         return count, count_vectorizer
-
-    def lda_vector(self):
-        pass
 
     def get_sentence_scores(self):
         '''
@@ -100,14 +96,6 @@ class Summarizer(object):
     def summarize(self):
         '''
         Create sentence rank. Pick highest scoring sentence(s) to form summary.
-        Note: Divide out sentence rank into another function if I have more time.
-
-        - Rake boosted ROUGE-N score by about 2%
-
-        - Preprocessing
-        - keyword extractor
-        - generate candidate keywords--> fed to LDA vectors
-        - Google ngram
         '''
         # how do I pick the top sentences and then maintain the order?
         self.sentences = np.array(self.sentences)

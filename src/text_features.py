@@ -19,6 +19,8 @@ class TextFeatures(object):
     def sentence_position_weight(self, pos_percent):
         '''
         Weights a sentence based on it's position in the chapter.
+        INPUT: sentence position in relation to entire text
+        OUTPUT: Position weight
         '''
         if pos_percent <=0.1:
             return 0.17
@@ -44,6 +46,8 @@ class TextFeatures(object):
     def num_tokens(self, documents):
         '''
         Number of words in sentence
+        INPUT: Sentences
+        OUTPUT: num of words in sentence dictionary
         '''
         num_words_dict = dict.fromkeys(documents, 0)
         for sentence in num_words_dict:
@@ -51,6 +55,10 @@ class TextFeatures(object):
         return num_words_dict
 
     def term_frequencies(self, sentence, topic, key_words):
+        '''
+        INPUT: Sentence strings, topic number, key words from LDA model
+        OUTPUT: Number of times a key word appears
+        '''
         word_appear = 0
         for word in sentence:
             if word in key_words[topic]:
@@ -59,7 +67,8 @@ class TextFeatures(object):
 
     def presence_of_verb(self, sentence):
         '''
-        If sentence contains a verb, upweight the score of the sentence.
+        INPUT: Sentence strings
+        OUTPUT: Count of verbs in the sentence
         '''
         verb_type = ['VB','VBZ','VBN','VBG','VBD']
         # text = word_tokenize(sentence)
@@ -69,13 +78,3 @@ class TextFeatures(object):
             if any(verb in word for verb in verb_type):
                 verb_count += 1
         return verb_count
-
-    '''
-    -------------------- Word Features --------------------
-    '''
-
-    def parts_of_speech(self):
-        pass
-
-    def word_familiarity(self):
-        pass

@@ -10,17 +10,25 @@ from load_scraped_summary import read_full_book_txt, read_summary_txt
 import collections
 
 def load_data(filename):
+    '''
+    INPUT: Filename to be loaded
+    OUTPUT: Opened filename
+    '''
     with open('books.json') as books:
         d = json.load(books)
         return d
 
 def get_titles(summaries):
+    '''
+    INPUT: Summaries file
+    OUTPUT: Summaries dictionary
+    '''
     return [summaries[i]['title'] for i in range(len(summaries))]
 
 def aggregate_summaries(summaries):
     '''
-    Create a dictionary of each summary with the title as the key and all it's summary content as
-    the values.
+    INPUT: Summaries file
+    OUTPUT: Summary formatted dictionary
     '''
     summary_dict = {}
     for summary in summaries:
@@ -33,6 +41,10 @@ def aggregate_summaries(summaries):
     return summary_dict
 
 def get_rid_of_tags(text):
+    '''
+    INPUT: Text file
+    OUTPUT: Cleaned text file
+    '''
     text = re.sub('[</p>]', '', text)
     text = text.replace('strong', '')
     text = re.sub('[^A-Za-z0-9|.|,|!|?]+', ' ', text)
@@ -40,9 +52,8 @@ def get_rid_of_tags(text):
 
 def read_all_files_in_folder(path, summary_dict):
     '''
-    Open all the files in the folder.
-    Check filename match with summary_dict title.
-    Store in summary_dict with key = 'book' and book text as value.
+    INPUT: file path, summary dictionary
+    OUTPUT: Summary book dictionary with key = 'book' and book text as value
     '''
     titles = [title.lower() for title in summary_dict.keys()]
 
@@ -58,6 +69,10 @@ def read_all_files_in_folder(path, summary_dict):
     return sum_book_dict
 
 def clean_book_text(sum_book_dict, form):
+    '''
+    INPUT: Summary book dictionary, Form
+    OUTPUT: Cleaned summary book dictionary
+    '''
     for title in sum_book_dict:
         whole_text = sum_book_dict[title][form]
         cleaned = format_books.get_rid_of_weird_characters(whole_text)
@@ -66,6 +81,10 @@ def clean_book_text(sum_book_dict, form):
     return sum_book_dict
 
 def combine_both_dictionaries(blinkist_book_dict, katrina_book_sum_dict):
+    '''
+    INPUT: Blinkist book files dictionary, katrina book file dictionary
+    OUTPUT: Combined both dictionaries into one dictionary
+    '''
     cleaned = clean_book_text(katrina_book_sum_dict, 'summary')
     for title in cleaned:
         blinkist_book_dict[title] = {'summary':cleaned[title]['summary'], 'book':katrina_book_sum_dict[title]['book']}
@@ -73,6 +92,10 @@ def combine_both_dictionaries(blinkist_book_dict, katrina_book_sum_dict):
     return super_dict
 
 def clean_summary(sum_book_dict):
+    '''
+    INPUT: Summary book dictionary
+    OUTPUT: Cleaned summary book dictionary
+    '''
     for summary in sum_book_dict:
         whole_text = sum_book_dict[book]['book']
         cleaned = format_books.get_rid_of_weird_characters(whole_text)

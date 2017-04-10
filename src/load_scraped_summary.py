@@ -4,9 +4,8 @@ import glob
 
 def read_full_book_txt(path):
     '''
-    Open all the book text files in Katrina Pulled Book txt.
-    Store the text filenames as the keys in the dictionary.
-    Create a dictionary within dictionary with keys 'book' and 'summary'
+    INPUT: Book text path
+    OUTPUT: Cleaned Book dictionary
     '''
     book_dict = {}
     for filename in glob.glob(path):
@@ -18,6 +17,8 @@ def read_full_book_txt(path):
 def read_summary_txt(path, book_dict):
     '''
     Open all the summary text files in Katrina Pulled Summary txt
+    INPUT: Path, Book dictionary
+    OUTPUT: Book dictionary with summaries
     '''
     titles = book_dict.keys()
     book_sum_dict = {}

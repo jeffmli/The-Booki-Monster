@@ -11,6 +11,9 @@ class RandomSummarizer(object):
         self.random_summary = []
 
     def sentence_generator(self):
+        '''
+        Randomly chooses sentences from sentence variable.
+        '''
         # random.choice(chapter1_sentences_cleaned)
         for i in range(self.summary_length):
             chosen_sentence = random.choice(self.sentences)
@@ -18,11 +21,9 @@ class RandomSummarizer(object):
             self.random_summary.append(chosen_sentence)
 
     def format_summary(self):
-        # clean_summary_array = []
-        # for sentence in self.random_summary:
-        #     # sentence = ''.join(sentence[0].upper() + sentence[1:])
-        #     clean_summary_array.append(sentence)
-        # # clean_summary_array = ' '.join(clean_summary_array).replace(',', '.')
+        '''
+        OUTPUT: Random Summary formatted into string.
+        '''
         self.random_summary = [''.join(sentence) for sentence in self.random_summary]
         self.random_summary = ' '.join(self.random_summary)
         return self.random_summary

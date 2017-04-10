@@ -1,10 +1,5 @@
 '''
 Taking in a txt file and formatting the txt file in a way that can be fed into my model
-
-Different Ideas:
-- Split text file by chapters
-- Split text file by word percentages
-
 '''
 import pandas as pd
 import numpy as np
@@ -13,32 +8,31 @@ from nltk import sent_tokenize
 
 def load_data(filename):
     '''
-    Load data
+    INPUT: Filename
+    OUTPUT: Opened filename
     '''
     f = open(filename)
     return f.read()
 
 def get_rid_of_weird_characters(book):
+    '''
+    INPUT: Book file
+    OUTPUT: Cleaned Book file
+    '''
     book = re.sub('[^A-Za-z0-9,;.?!'']+', ' ', book)
     return book
 
 def get_sections(book):
+    '''
+    INPUT: Book text file
+    OUTPUT: Split book text file
+    '''
     return book.split('\n\n\n\n\n\n')
-
-def slice_introduction(book):
-    '''
-    Ideas:
-    - Write a function that detects whether a section is the actual content or not.
-    - Find a marker that marks the first chapter or introduction and slice everything
-    after that.
-    -
-    '''
-    pass
 
 def chapter_paragraph_tag(book):
     '''
-    Tags the beginning of each chapter and beginning and end of every paragraph
-    - Create a chapter indicators list
+    INPUT: Book text file
+    OUTPUT: Tagged book text file
     '''
     chapter_book = []
     chapter_indicators = ["Chapter", "ONE", "TWO", "THREE", "FOUR", "FIVE", "SIX", "SEVEN", "EIGHT", "NINE", "TEN", "ELEVEN", "TWELVE", "THIRTEEN"]
@@ -54,15 +48,16 @@ def chapter_paragraph_tag(book):
 
 def combine_strings_split_on_chapter(book):
     '''
-    Combine tagged strings into one and split on chapter tag
+    INPUT: Book text file
+    OUTPUT: Split book text file by chapter tag
     '''
     book = " ".join(book)
     return book.split("<CHAPTERBEGIN>")
 
 def split_by_section(book):
     '''
-    For each chapter, split on paragraph tags. append these into paragraphs of chapter list.
-    Append par_of_chapter list into book_list
+    INPUT: Book text file
+    OUTPUT: Split book text file
     '''
     book_list = []
     for chapter in book:
@@ -73,7 +68,8 @@ def split_by_section(book):
 
 def format_sentences(book):
     '''
-    Tokenize all sentences in each chapter. Create a new data structure with the sentences tokenized
+    INPUT: Book text file
+    OUTPUT: List of each text file section tokenized
     '''
     book_list = []
     paragraph_list = []
@@ -89,6 +85,8 @@ def format_sentences(book):
 def split_by_percentage(book, n = 10):
     '''
     Splitting the book into n number of sections
+    INPUT: Book text file
+    OUTPUT: Book text file section
     '''
     book_sections = []
     sentences_in_section = len(book)/n
