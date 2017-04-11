@@ -7,9 +7,8 @@ But a book that might take 5-10 hours to read? Well, what if I told you that you
 
 While writing this up, I had two audiences in mind:
 
-# The " I barely know what Machine Learning is" crowd.
-
-# The "I am a Machine Learning genius" crowd. 
+- The " I barely know what Machine Learning is" crowd.
+- The "I am a Machine Learning genius" crowd. 
 
 So my goal here is to make part of this post relatable to a general audience. Anytime I intend to dive into more technical language, I'll let you know so you're not completely confused :) 
 
@@ -43,9 +42,9 @@ Similar to key words, I also looked at:
 
 Using all these factors, I created a sentence score. Then, I ranked the sentences based on the score. Then the Booki Monster would spit out the sentences that had the highest scores. 
 
-(Technical. You won't understand without knowing Machine Learning)
+# 3.The Booki Monster's Body (Technical)
 
-Method
+# Method
 
 When creating the Booki Monster, I had a couple different options:
 
@@ -61,7 +60,7 @@ I took an iterative approach to modeling. I'd model a paragraph, then a chapter 
 
 After tokenizing my text files, I engineered four different features for the sentences:
 
-Feature Engineering
+# Feature Engineering
 
 1. Term-Frequency: If a keyword appeared more often, the better the sentence. 
 
@@ -71,65 +70,11 @@ Feature Engineering
 
 4. Sentence Length: I down weighted short sentences, since a short, 4 word sentence, that might contain a key word, isn't that important. 
 
-Modeling
+# Modeling
 
 Latent Dirichlet Allocation: I felt that LDA would be the best topic model for extracting key words because a book covers a wide swath of topics, and the model all the words over all the topics. Other methods such as clustering, NMF couldn't do this. 
 
 Here's a wordcloud of the topic models for Chaos Monkey by Antonio Garcia Martinez:
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 I first modeled the books that I read, this way, I could hand-select the best topic for the book. I settled on 10 topics and 50 key words by examining summary quality for different parameters. 
 The problem I faced when Topic-Modeling, is that each book had a different optimal topic. So when I moved onto books I haven't read, I wouldn't know what the ideal topic was. So I just chose a topic at random, with the understanding that it might affect my score in the future. 
@@ -140,7 +85,7 @@ Doc2Vec: In addition to a more Bayesian approach to modeling the text, I wanted 
 
 I used Doc2Vec by transforming each sentence into sentence vectors and then took the cosine similarity of the vectors against the entire book to find the best sentences.
 
-Scoring
+# Scoring
 
 Summary's are subjective. There is no "correct" answer. So the challenge was to figure out how to quantify a "good" summary when there was no real benchmark. 
 
@@ -148,12 +93,9 @@ Based on my research, the ROUGE-N score was the best measure for automatic summa
 
 When scoring the models, I wanted to test the models on the entire book and applying the model to 10 different sections of the book, and then aggregating the summary. Here are the scores:
 
-<Insert scores>
+Insert Scores
 
-Conclusions
-
-
-4. The Results(Non-Technical)
+# Conclusions
 
 - Doc2Vec Worked Best: As you can see by the scores, the Doc2Vec split in 10 model seemed to score the highest. Just by looking at the scores, splitting the book into 10 sections seemed to immediately boost the score, compared to applying the model to the entire book. 
 
@@ -163,7 +105,7 @@ To dive a bit deeper into the writing style, author's write their books, knowing
 
 - Model is biased towards long sentences: If you look at the average sentence length:
 
-<Insert average sentence length>
+Insert average sentence length
 
 You'll notice that the average words/sentence for the Doc2Vec summaries are about 20 words/sentence longer than the words/sentence in the reference summaries. This finding leads me to claim, that the model bias' a bit towards longer sentences, which makes sense due to the scoring method. A longer sentence has a higher likelihood of containing pairs of words that match pairs in the reference summaries, which boosts the ROUGE-N score. This method does eliminate low-information short sentences.
 
@@ -173,7 +115,7 @@ In the future, the problem will be to figure out how not to overweight the long 
 
 A future solution can be a query-based summarization method, where the user inputs a specific question they're asking, and then the model writes the summary based on the question the user asks. 
 
-Future
+# Future
 
 In the future, there are many things I may be able to try:
 
