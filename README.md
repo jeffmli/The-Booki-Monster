@@ -1,5 +1,5 @@
 # The Booki Monster
-![alt tag](http://url/to/img.png)
+![alt tag](http://www.babydigezt.com/wp-content/uploads/2014/09/book-monster.jpg)
 
 One of the biggest problems I've noticed, since entering the "real world", is that it's hard to find time for things. Going on adventures, finding a girlfriend, building new social groups, having interesting hobbies...... and reading books. Or maybe, you're just too hungover....... 
 
