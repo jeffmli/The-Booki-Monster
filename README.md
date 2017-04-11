@@ -141,3 +141,25 @@ In the future, there are many things I may be able to try:
 2. Human Feedback: Scoring is hard. Like I said before, summaries are subjective. In the future, having the model create summaries and get user feedback can add a human element to summary creation.
 
 3. Query-Based Summary: Have users input questions and model creates summary based on those questions
+
+# Example
+
+Visit www.bookimonster.com to see sample summaries of a few books. 
+
+Web-Application coming soon!
+
+# Sources
+
+Automatic Extraction Based Summarizer - R.M Aliguliyev
+
+Latent Dirichlet Allocation Based Multi-Document Summarization - Rachit Arora, Balaraman Ravindran
+
+Looking for a Few Good Metrics: ROUGE and its Evaluation - Chin-Yew Lin
+
+Sentence Extraction Based Single Document Summarization - Jagadeesh J, Prasad Pingali, Vasudeva Varma
+
+Distributed Representations of Sentences and Documents - Quoc Le, Tomas Mikolov
+
+Latent Dirichlet Allocation - David Blei, Andrew Ng, Michael Jordan
+
+LDA2Vec - Chris Moody
