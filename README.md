@@ -1,4 +1,4 @@
-# The-Lazy-Reader
+# The Booki Monster
 
 One of the biggest problems I've noticed, since entering the "real world", is that it's hard to find time for things. Going on adventures, finding a girlfriend, building new social groups, having interesting hobbies...... and reading books. Or maybe, you're just too hungover....... 
 
@@ -6,17 +6,17 @@ But a book that might take 5-10 hours to read? Well, what if I told you that you
 
 While writing this up, I had two audiences in mind:
 
-1. The " I barely know what Machine Learning is" crowd.
+1.The " I barely know what Machine Learning is" crowd.
 
-2. The "I am a Machine Learning genius" crowd. 
+2.The "I am a Machine Learning genius" crowd. 
 
 So my goal here is to make part of this post relatable to a general audience. Anytime I intend to dive into more technical language, I'll let you know so you're not completely confused :) 
 
-1. Who is the Booki Monster?
+1.Who is the Booki Monster?
 
 You see those pile of books on your drawer that you're "too busy" to crack open? Well, that's the Booki Monster's food. Feed the Booki Monster your books and then she'll spit out the golden nuggets in the form of summaries.
 
-2. Feeding the Monster
+2.Feeding the Monster
 
 You know that feeling when you're with your friends, you want to eat out, but can't decide where to eat because there are wayyyy too many options? Feeding the Booki Monster was the same, I had too many options: science fiction, business, self-help, psychology, scientific research etc. 
 
@@ -26,24 +26,21 @@ So I settled on feeding the Booki Monster only business books for this reason. 
 
 With this understanding, grab your nearest surgeon, and let's start dissecting the body of the Booki Monster. Mmmmm.... tasty........
 
-3. The Booki Monster's Body
-
-(Non-Technical)
+3.The Booki Monster's Body (Non-Technical)
 
 To understand how the Booki Monster's body actually produces summaries, let's talk about how you read on the internet. 
 
-​​​​​
 Let's say, you're waiting for your Uber to come and have a couple minutes of time to kill. So you flip out your phone and open up your Facebook. You start scrolling through your newsfeed and see that Sally posted an article that says "Trump Suggests Bigger Role for U.S. in Syria’s Conflict." You live in San Francisco, so you have a passionate hate for Trump, so you click on the link. The article is kinda long and since you're limited on time, you scan the article, trying to decide if the entire thing is worth reading. You see that the article talks about "North Korea" and start thinking " Ohh.... this is interesting, I'll save this for later." When you saw the title of the news article, what keyword triggered you to click?  Trump. If you're interested in foreign policy, it might've been Syria . It changes for each person, but the idea is that there were specific key words in the text that gave you a good picture of what the article is about. And when you scan the article, you see North Korea, so Trump, Syria, North Korea , already give you an idea that this article is about some problems/tensions. 
 
-In relation to the Booki Monster, the monster will find these important keywords in an article, that'll give you the most amount of information. And the assumption here, is that sentences that have these keywords are likely to give you the highest amount of information about the article. 
+In relation to the Booki Monster, the monster will find these important keywords in an article that'll give you the most amount of information. And the assumption here, is that sentences that have these keywords are likely to give you the highest amount of information about the article( which isn't always true). 
 
 Similar to key words, I also looked at:
 
-- Sentence Location: Sentences that are topic sentences are probably going to give you more information.
-- Verb: Sentences that contain verbs are telling you an action occuring, so it's probably going to give you more information.
-- Sentence Length: If a sentence is four words, it probably won't tell you as much than a 10 word sentence.    
+1.Sentence Location: Sentences that are topic sentences are probably going to give you more information.
+2.Verb: Sentences that contain verbs are telling you an action occuring, so it's probably going to give you more information.
+3.Sentence Length: If a sentence is four words, it probably won't tell you as much than a 10 word sentence.    
 
-Using all these factors, I created a sentence score, for sentence. Then I ranked the sentences in order based on the score. Then the Booki Monster would spit out the sentences that had the highest scores. 
+Using all these factors, I created a sentence score. Then, I ranked the sentences based on the score. Then the Booki Monster would spit out the sentences that had the highest scores. 
 
 (Technical. You won't understand without knowing Machine Learning)
 
