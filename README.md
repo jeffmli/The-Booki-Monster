@@ -105,7 +105,11 @@ To dive a bit deeper into the writing style, author's write their books, knowing
 
 - Model is biased towards long sentences: If you look at the average sentence length:
 
-Insert average sentence length
+![word per sentence](https://cloud.githubusercontent.com/assets/22338112/24921178/c60505e8-1e9e-11e7-8d0a-c0b7e1c71bd5.png)
+
+In addition, I created a quick regression of word/sentence against ROUGE-N score. 
+
+![word sentence regression](https://cloud.githubusercontent.com/assets/22338112/24921114/9626393c-1e9e-11e7-925f-8b79253deb8b.png)
 
 You'll notice that the average words/sentence for the Doc2Vec summaries are about 20 words/sentence longer than the words/sentence in the reference summaries. This finding leads me to claim, that the model bias' a bit towards longer sentences, which makes sense due to the scoring method. A longer sentence has a higher likelihood of containing pairs of words that match pairs in the reference summaries, which boosts the ROUGE-N score. This method does eliminate low-information short sentences.
 
