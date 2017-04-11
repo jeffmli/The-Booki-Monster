@@ -1,4 +1,5 @@
 # The Booki Monster
+![alt tag](http://url/to/img.png)
 
 One of the biggest problems I've noticed, since entering the "real world", is that it's hard to find time for things. Going on adventures, finding a girlfriend, building new social groups, having interesting hobbies...... and reading books. Or maybe, you're just too hungover....... 
 
