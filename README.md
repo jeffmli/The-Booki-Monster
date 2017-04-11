@@ -94,7 +94,9 @@ Based on my research, the ROUGE-N score was the best measure for automatic summa
 When scoring the models, I wanted to test the models on the entire book and applying the model to 10 different sections of the book, and then aggregating the summary. Here are the scores:
 
 Doc2Vec Split in 10: 0.241( + 0.126 over random)
+
 LDA Split in 10: 0.176 ( + 0.062 over random)
+
 Random Split in 10: 0.114 (-----------------)
 
 # Conclusions
