@@ -37,7 +37,9 @@ In relation to the Booki Monster, the monster will find these important keywords
 Similar to key words, I also looked at:
 
 1.Sentence Location: Sentences that are topic sentences are probably going to give you more information.
+
 2.Verb: Sentences that contain verbs are telling you an action occuring, so it's probably going to give you more information.
+
 3.Sentence Length: If a sentence is four words, it probably won't tell you as much than a 10 word sentence.    
 
 Using all these factors, I created a sentence score. Then, I ranked the sentences based on the score. Then the Booki Monster would spit out the sentences that had the highest scores. 
@@ -74,9 +76,16 @@ After tokenizing my text files, I engineered four different features for the sen
 
 Latent Dirichlet Allocation: I felt that LDA would be the best topic model for extracting key words because a book covers a wide swath of topics, and the model all the words over all the topics. Other methods such as clustering, NMF couldn't do this. 
 
-Here's a wordcloud of the topic models for Chaos Monkey by Antonio Garcia Martinez:
+Here's a wordcloud of the chosen topic model for Chaos Monkey by Antonio Garcia Martinez:
+
+![topic word cloud](https://cloud.githubusercontent.com/assets/22338112/24921620/4a1cec5a-1ea0-11e7-8e19-8216cfed709b.png)
+
+And a wordcloud of the entire book:
+
+![book word cloud](https://cloud.githubusercontent.com/assets/22338112/24921633/56cd0e3a-1ea0-11e7-9444-eb9abd186bbd.png)
 
 I first modeled the books that I read, this way, I could hand-select the best topic for the book. I settled on 10 topics and 50 key words by examining summary quality for different parameters. 
+
 The problem I faced when Topic-Modeling, is that each book had a different optimal topic. So when I moved onto books I haven't read, I wouldn't know what the ideal topic was. So I just chose a topic at random, with the understanding that it might affect my score in the future. 
 
 In the future, a good idea would be to topic model all the books as one document which might be a better way of finding the best topic.   
