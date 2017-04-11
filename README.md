@@ -93,17 +93,17 @@ Based on my research, the ROUGE-N score was the best measure for automatic summa
 
 When scoring the models, I wanted to test the models on the entire book and applying the model to 10 different sections of the book, and then aggregating the summary. Here are the scores:
 
-Insert Scores
+![scores](https://cloud.githubusercontent.com/assets/22338112/24921319/4486c2e4-1e9f-11e7-8169-54a82efcd47f.png)
 
 # Conclusions
 
-- Doc2Vec Worked Best: As you can see by the scores, the Doc2Vec split in 10 model seemed to score the highest. Just by looking at the scores, splitting the book into 10 sections seemed to immediately boost the score, compared to applying the model to the entire book. 
+1. Doc2Vec Worked Best: As you can see by the scores, the Doc2Vec split in 10 model seemed to score the highest. Just by looking at the scores, splitting the book into 10 sections seemed to immediately boost the score, compared to applying the model to the entire book. 
 
-- Better to be used for previews than summaries: Because I chose an extraction-based method, I was already aware that the writing style of an author compared to a human summarizer was going to be a bit different. 
+2. Better to be used for previews than summaries: Because I chose an extraction-based method, I was already aware that the writing style of an author compared to a human summarizer was going to be a bit different. 
 
 To dive a bit deeper into the writing style, author's write their books, knowing that they have approx 300 pages to convey their idea. As a result, sentences will contain much more detail, and author's are willing to dive into technicalities a bit more because they have enough space to explain a term they can use for the rest of the book. Compared with the human-written summaries, human writers are obviously going to condense the writing into fewer words, while diluting the arguments behind the concepts. 
 
-- Model is biased towards long sentences: If you look at the average sentence length:
+3. Model is biased towards long sentences: If you look at the average sentence length:
 
 ![word per sentence](https://cloud.githubusercontent.com/assets/22338112/24921178/c60505e8-1e9e-11e7-8d0a-c0b7e1c71bd5.png)
 
@@ -115,7 +115,7 @@ You'll notice that the average words/sentence for the Doc2Vec summaries are abou
 
 In the future, the problem will be to figure out how not to overweight the long sentences while still eliminating the short sentences.  
 
-- Human summarizers emphasize different key points: Summaries and most writing, is subjective. A human summarizer already decides upon what key points they think the reader finds interesting. However, every reader is asking different questions when they're reading a book. An older man, may be wondering how he can find peace for the rest of his life, while a teenage girl may be trying to figure out what she should do with her life. Different questions, different answers, different summaries. 
+4. Human summarizers emphasize different key points: Summaries and most writing, is subjective. A human summarizer already decides upon what key points they think the reader finds interesting. However, every reader is asking different questions when they're reading a book. An older man, may be wondering how he can find peace for the rest of his life, while a teenage girl may be trying to figure out what she should do with her life. Different questions, different answers, different summaries. 
 
 A future solution can be a query-based summarization method, where the user inputs a specific question they're asking, and then the model writes the summary based on the question the user asks. 
 
