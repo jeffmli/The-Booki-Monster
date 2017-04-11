@@ -1,23 +1,23 @@
 # The Booki Monster
 ![alt tag](http://www.babydigezt.com/wp-content/uploads/2014/09/book-monster.jpg)
 
-One of the biggest problems I've noticed, since entering the "real world", is that it's hard to find time for things. Going on adventures, finding a girlfriend, building new social groups, having interesting hobbies...... and reading books. Or maybe, you're just too hungover....... 
+One of the biggest problems I've noticed since entering the "real world", is that it's hard to find time for things. Going on adventures, finding a girlfriend, building new social groups, having interesting hobbies...... and reading books. Or maybe, you're just too hungover....... 
 
 But a book that might take 5-10 hours to read? Well, what if I told you that you could get the key points from the book without actually reading the book? I want to introduce you to the "Booki Monster." A machine-learning powered monster that reads your books and summarizes them for you. 
 
 While writing this up, I had two audiences in mind:
 
-1.The " I barely know what Machine Learning is" crowd.
+# The " I barely know what Machine Learning is" crowd.
 
-2.The "I am a Machine Learning genius" crowd. 
+# The "I am a Machine Learning genius" crowd. 
 
 So my goal here is to make part of this post relatable to a general audience. Anytime I intend to dive into more technical language, I'll let you know so you're not completely confused :) 
 
-1.Who is the Booki Monster?
+# 1.Who is the Booki Monster?
 
 You see those pile of books on your drawer that you're "too busy" to crack open? Well, that's the Booki Monster's food. Feed the Booki Monster your books and then she'll spit out the golden nuggets in the form of summaries.
 
-2.Feeding the Monster
+# 2.Feeding the Monster
 
 You know that feeling when you're with your friends, you want to eat out, but can't decide where to eat because there are wayyyy too many options? Feeding the Booki Monster was the same, I had too many options: science fiction, business, self-help, psychology, scientific research etc. 
 
@@ -27,7 +27,7 @@ So I settled on feeding the Booki Monster only business books for this reason. 
 
 With this understanding, grab your nearest surgeon, and let's start dissecting the body of the Booki Monster. Mmmmm.... tasty........
 
-3.The Booki Monster's Body (Non-Technical)
+# 3.The Booki Monster's Body (Non-Technical)
 
 To understand how the Booki Monster's body actually produces summaries, let's talk about how you read on the internet. 
 
