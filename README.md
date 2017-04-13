@@ -5,12 +5,7 @@ One of the biggest problems I've noticed since entering the "real world", is tha
 
 But a book that might take 5-10 hours to read? Well, what if I told you that you could get the key points from the book without actually reading the book? I want to introduce you to the "Booki Monster." A machine-learning powered monster that reads your books and summarizes them for you. 
 
-While writing this up, I had two audiences in mind:
-
-- The " I barely know what Machine Learning is" crowd.
-- The "I am a Machine Learning genius" crowd. 
-
-So my goal here is to make part of this post relatable to a general audience. Anytime I intend to dive into more technical language, I'll let you know so you're not completely confused :) 
+My goal with this README, is for a non-technical person to understand technically how I built my project. 
 
 # 1.Who is the Booki Monster?
 
@@ -26,43 +21,50 @@ So I settled on feeding the Booki Monster only business books for this reason. 
 
 With this understanding, grab your nearest surgeon, and let's start dissecting the body of the Booki Monster. Mmmmm.... tasty........
 
-# 3.The Booki Monster's Body (Non-Technical)
-
-To understand how the Booki Monster's body actually produces summaries, let's talk about how you read on the internet. 
-
-Let's say, you're waiting for your Uber to come and have a couple minutes of time to kill. So you flip out your phone and open up your Facebook. You start scrolling through your newsfeed and see that Sally posted an article that says "Trump Suggests Bigger Role for U.S. in Syria’s Conflict." You live in San Francisco, so you have a passionate hate for Trump, so you click on the link. The article is kinda long and since you're limited on time, you scan the article, trying to decide if the entire thing is worth reading. You see that the article talks about "North Korea" and start thinking " Ohh.... this is interesting, I'll save this for later." When you saw the title of the news article, what keyword triggered you to click?  Trump. If you're interested in foreign policy, it might've been Syria . It changes for each person, but the idea is that there were specific key words in the text that gave you a good picture of what the article is about. And when you scan the article, you see North Korea, so Trump, Syria, North Korea , already give you an idea that this article is about some problems/tensions. 
-
-In relation to the Booki Monster, the monster will find these important keywords in an article that'll give you the most amount of information. And the assumption here, is that sentences that have these keywords are likely to give you the highest amount of information about the article( which isn't always true). 
-
-Similar to key words, I also looked at:
-
-1.Sentence Location: Sentences that are topic sentences are probably going to give you more information.
-
-2.Verb: Sentences that contain verbs are telling you an action occuring, so it's probably going to give you more information.
-
-3.Sentence Length: If a sentence is four words, it probably won't tell you as much than a 10 word sentence.    
-
-Using all these factors, I created a sentence score. Then, I ranked the sentences based on the score. Then the Booki Monster would spit out the sentences that had the highest scores. 
-
 # 3.The Booki Monster's Body (Technical)
 
 # Method
 
 When creating the Booki Monster, I had a couple different options:
 
-1. Sentence Extraction
-2. Abstractive Methods
-3. Graph-Based
+1. Sentence Extraction: It's similar to DJ'ing vs. Music Production. Am I using the songs already created? Or am I creating new sounds? Sentence Extraction is like DJ'ing, taking the text already written and using them as the summary. 
+2. Abstractive Methods: Abstractive Methods are kinda like creating the sounds yourself. In the context of summarizing, it means that the machine needs to understand the text on a much, much deeper level.
+3. Graph-Based: Graph-Based is more like DJ'ing than Music Production. Imagine all your Facebook friends as a fuzzy ball, where each person may have a relationship with another, with varying degrees of strength. The same model would be used for sentences, each sentence would have a relationship with each other, with varying degrees of strength. 
 
-I decided that within my timeframe of two weeks, an extraction-based methodology would be most feasible( especially for a one-person team). 
+And because I only had two weeks to do it, DJ'ing would probably be more feasible for a one-man team. 
 
-After selecting the methodology, I noticed in books, certain phrases of words tended to carry  more weight than just the words itself. So in addition to removing the stop words, I passed the data through a Rapid Automatic Keyword Extraction which tokenized my sentences by key phrases, not solely words. 
+# Strategy
 
-I took an iterative approach to modeling. I'd model a paragraph, then a chapter and then the entire book. 
+If you've read the Lean Startup, you'll notice that Eric Ries advocates the "Minimum Viable Product" approach. In this context, my goal was to build a working model as fast as I could and then continuously iterate upon that. So the way I modeled this was:
 
-After tokenizing my text files, I engineered four different features for the sentences:
+1. Model one chapter
+2. Model one book
+3. Model five books
+4. Model 10 books
+
+And on... and on.... you get the idea.
+
+# Rapid Automatic What.........? 
+
+As I'm typing these words on the keyboard, I'm wondering how I can explain this without boring Machine-Learning enthusiasts while making it understandable for normal people.
+
+Sorry ML people, general audience wins here.
+
+Imagine yourself as a puzzle-maker. You're boss gives you a beautiful sunset photo and wants you to hand-cut the pieces out. Each time you cut out the pieces, you have a little snippet of that photo. In Natural Language Processing, taking a picture and cutting it into pieces is called tokenizing. In order to analyze text, we need to cut it up into different pieces( usually each piece = word) but it depends on the project you're working on. 
+
+In the context of this project, I wanted to tokenize on key words. Sometimes, an author might use a phrase like "Moby Dick." "Moby Dick" should be treated as one phrase, not two. This is called Rapid Automatic Keyword Extraction. 
+
+After passing my books & summaries through a Rapid Automatic Keyword Extraction, it's time to engineer features:
 
 # Feature Engineering
+
+To understand what's going on here, let me introduce you to this scenario:
+
+Let's say, you're waiting for your Uber to come and have a couple minutes of time to kill. So you flip out your phone and open up your Facebook. You start scrolling through your newsfeed and see that Sally posted an article that says "Trump Suggests Bigger Role for U.S. in Syria’s Conflict." You live in San Francisco, so you have a passionate hate for Trump, so you click on the link. The article is kinda long and since you're limited on time, you scan the article, trying to decide if the entire thing is worth reading. You see that the article talks about "North Korea" and start thinking " Ohh.... this is interesting, I'll save this for later." When you saw the title of the news article, what keyword triggered you to click?  Trump. If you're interested in foreign policy, it might've been Syria . It changes for each person, but the idea is that there were specific key words in the text that gave you a good picture of what the article is about. And when you scan the article, you see North Korea, so Trump, Syria, North Korea , already give you an idea that this article is about some problems/tensions. 
+
+This idea of a key word giving you some information about text is called a feature. Features are kinda like hints. It's saying "HEY MODEL! PAY ATTENTION TO THIS A LITTLE BIT MORE!" 
+
+In addition to key words, here are all the things I thought the model should notice: 
 
 1. Term-Frequency: If a keyword appeared more often, the better the sentence. 
 
