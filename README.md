@@ -186,9 +186,11 @@ As you can see, the Kame-Kame-Ha Method(Doc2Vec) did 12.6% better than random an
 
 # Conclusions
 
+As a "Scientist", I've gotta extract some insights from all this "stuff." Let's bring the cake out the oven! <----- bad metaphor, but whatever. 
+
 1. Better to be used for previews than summaries: Because I was DJ'ing/extracting, I knew that writing style of an author is going to be different from a summary. Author's tend to write their books, knowing they have many, many pages to articulate an iea. As a result, sentences will contain more detail, and author's are willing to dive into technicalities a bit more because they have enough space to explain a term they can use for the rest of the book. Compared with the human-written summaries, human writers are  going to condense the writing into fewer words, while diluting the arguments behind the concepts. 
 
-2. Booki Monster loves long, meaty sentences: If you look at the average sentence length:
+2. Booki Monster loves long, meaty sentences( I thought about making a sexual joke here, but nah. This is professional): If you look at the average sentence length:
 
 ![word per sentence](https://cloud.githubusercontent.com/assets/22338112/24921178/c60505e8-1e9e-11e7-8d0a-c0b7e1c71bd5.png)
 
@@ -218,7 +220,7 @@ All in all, I hope you enjoyed reading this as much as I had writing/building th
 
 # Example
 
-Collapse by Jared Diamond
+##Collapse by Jared Diamond
 
 As for the complications, of course it’s not true that all societies are doomed to collapse because of environmental damage in the past, some societies did while others didn’t; the real question is why only some societies proved fragile, and what distinguished those that collapsed from those that didn’t. Some societies that I shall discuss, such as the Icelanders and Tikopians, succeeded in solving extremely difficult environmental problems, have thereby been able to persist for a long time, and are still going strong today.
 
