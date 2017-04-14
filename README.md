@@ -220,7 +220,7 @@ All in all, I hope you enjoyed reading this as much as I had writing/building th
 
 # Example
 
-##Collapse by Jared Diamond
+## Collapse by Jared Diamond
 
 As for the complications, of course it’s not true that all societies are doomed to collapse because of environmental damage in the past, some societies did while others didn’t; the real question is why only some societies proved fragile, and what distinguished those that collapsed from those that didn’t. Some societies that I shall discuss, such as the Icelanders and Tikopians, succeeded in solving extremely difficult environmental problems, have thereby been able to persist for a long time, and are still going strong today.
 
