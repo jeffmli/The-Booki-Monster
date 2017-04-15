@@ -32,12 +32,12 @@ def summary():
     This will return the summary of inputted text based on user input.
     '''
     text = request.form['text'].encode('utf8')
-    # text = text.encode('ascii', 'ignore')
-    # text = smart_str(text)
-    text_tokenized,similar_sentence_vectors =  doc2vec(text, length=5)
+    length = request.form['length'].encode('utf8')
+    length = int(length)
+    text_tokenized,similar_sentence_vectors =  doc2vec(text, length=length)
     summary = combine_into_summary(text_tokenized, similar_sentence_vectors)
     return render_template("summary.html", summary = summary)
 
 if __name__ == '__main__':
-    port = 5000
-    app.run(host='0.0.0.0',port=port,debug=True,threaded=False)
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host='0.0.0.0',port=port,debug=True,threaded=True)
